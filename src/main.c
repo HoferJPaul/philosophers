@@ -6,7 +6,7 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:15:43 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/09 16:10:30 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/09 16:39:56 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	parse_args(char **av, t_args	*philo)
 	while (av[i])
 	{
 		temp = ft_atoi(av[i]);
-		if (temp > 0)
+		if ((temp > 0) && temp < MAX_INPUT)
 		{
 			if (i == 1)
 				philo->quantity = temp;

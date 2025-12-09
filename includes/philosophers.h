@@ -6,12 +6,14 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:33:51 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/09 16:11:24 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/09 16:35:48 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
+
+# define MAX_INPUT 1000
 
 # include <stdio.h>
 # include <stdlib.h>
