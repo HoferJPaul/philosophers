@@ -6,62 +6,47 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:15:43 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/09 16:39:56 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/10 18:18:40 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	parse_args(char **av, t_args	*philo)
+void	free_all(t_rules *rules)
 {
-	int	i;
-	int	temp;
 
-	i = 1;
-	philo->eat_amount = -1;
-	while (av[i])
-	{
-		temp = ft_atoi(av[i]);
-		if ((temp > 0) && temp < MAX_INPUT)
-		{
-			if (i == 1)
-				philo->quantity = temp;
-			else if (i == 2)
-				philo->time_to_die = temp;
-			else if (i == 3)
-				philo->time_to_eat = temp;
-			else if (i == 4)
-				philo->time_to_sleep = temp;
-			else if (i == 5)
-				philo->eat_amount = temp;
-		}
-		else
-			exit (printf("Error %d: Only numbers above 0 are accepted\n", i));
-		++i;
-	}
 }
 
-void	print_struct(t_args	*philo)
+void	init_philo(char **av, t_rules	*rules)
 {
-	printf("quantity = %d\n", philo->quantity);
-	printf("time_to_die = %d\n", philo->time_to_die);
-	printf("time_to_eat = %d\n", philo->time_to_eat);
-	printf("time_to_sleep = %d\n", philo->time_to_sleep);
-	printf("eat_amount = %d\n", philo->eat_amount);
+	parse_args(av, rules);
+	rules->stop = 0;
+	rules->start_time = 0;
+	rules->forks = NULL;
+	rules->philos = NULL;
+}
+
+//test function, dont include in final
+void	print_struct(t_rules	*rules)
+{
+	printf("quantity = %d\n", rules->quantity);
+	printf("time_to_die = %d\n", rules->time_to_die);
+	printf("time_to_eat = %d\n", rules->time_to_eat);
+	printf("time_to_sleep = %d\n", rules->time_to_sleep);
+	printf("eat_amount = %d\n", rules->eat_amount);
 }
 
 int	main(int argc, char **argv)
 {
-	t_args	philo;
+	t_rules	rules;
 
-	memset(&philo, 0, sizeof(t_args));
+	memset(&rules, 0, sizeof(t_rules));
 	if (argc < 5 || argc > 6)
 	{
-		printf("./philo quantity time2die time2eat time2sleep number_of_eat\n");
+		printf("./rules 'quantity time2die time2eat time2sleep number2eat'\n");
 		return (1);
 	}
-	parse_args(argv, &philo);
-
-	print_struct(&philo);
+	initialize(argv, &rules);
+	print_struct(&rules);
 	return (0);
 }
