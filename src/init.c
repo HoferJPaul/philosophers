@@ -6,7 +6,7 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 17:38:15 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/10 17:39:27 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/15 16:57:36 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	parse_args(char **av, t_rules	*rules)
 	rules->eat_amount = -1;
 	while (av[i])
 	{
-		temp = ft_atoi(av[i]);
+		temp = ft_atoi_strict(av[i]);
 		if ((temp > 0) && temp < MAX_INPUT)
 		{
 			if (i == 1)
@@ -41,41 +41,6 @@ void	parse_args(char **av, t_rules	*rules)
 	}
 }
 
-int	init_forks(t_rules	*rules)
-{
-	int	i;
-
-	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->quantity);
-	if (!rules->forks)
-		return (1);
-	i = 0;
-	while (i < rules->quantity)
-	{
-		if (pthread_mutex_init(&rules->forks[i], NULL) != 0)
-		{
-			while (--i >= 0)
-				pthread_mutex_destroy(&rules->forks[i]);
-			free(rules->forks);
-			rules->forks = NULL;
-			return (1);
-		}
-		++i;
-	}
-	return (0);
-}
-
-int	init_mutex(t_rules *rules)
-{
-	if (pthread_mutex_init(&rules->write_lock, NULL) != 0)
-		return (1);
-	if (pthread_mutex_init(&rules->meal_check, NULL) != 0)
-	{
-		pthread_mutex_destroy(&rules->write_lock);
-		return (1);
-	}
-	return (0);
-}
-
 int	init_philosophers(t_rules *rules)
 {
 	int	i;
@@ -87,9 +52,12 @@ int	init_philosophers(t_rules *rules)
 	while (i < rules->quantity)
 	{
 		rules->philos[i].id = i + 1;
-		rules->philos[i].left_fork = i;
-		rules->philos[i].right_fork = (i + 1) % rules->quantity;
-		rules->philos[i].last_meal = 0;
+		pthread_mutex_init(&rules->philos[i].left_fork, NULL);
+		if (i + 1 == rules->quantity)
+			rules->philos[i].right_fork = &rules->philos[0].left_fork;
+		else
+			rules->philos[i].right_fork = &rules->philos[i + 1].left_fork;
+		rules->philos[i].last_meal = rules->start_time;
 		rules->philos[i].eat_count = 0;
 		rules->philos[i].rules = rules;
 		i++;
@@ -97,18 +65,30 @@ int	init_philosophers(t_rules *rules)
 	return (0);
 }
 
+void	init_args(char **av, t_rules	*rules)
+{
+	parse_args(av, rules);
+	pthread_mutex_init(&rules->write_lock, NULL);
+	rules->stop = 0;
+	rules->start_time = 0;
+	rules->philos = NULL;
+}
+
 void	initialize(char **av, t_rules	*rules)
 {
-	init_philo(av, rules);
-	if (init_forks(&rules) != 0)
+	init_args(av, rules);
+	rules->start_time = ft_now_ms();
+	if (!rules->start_time)
 	{
-		printf("ERROR: init_mutex failed");
+		printf("ERROR: gettimeofday failed");
+		// free_all(&rules);
 		exit (1);
 	}
-	if (init_mutex(&rules) != 0)
+	if (init_philosophers(rules) != 0)
 	{
-		printf("ERROR: init_mutex failed");
-		free_all(&rules);
+		printf("ERROR: init_philosophers failed");
+		// free_all(&rules);
 		exit (1);
 	}
 }
+
