@@ -6,7 +6,7 @@
 #    By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/10 13:48:50 by phofer            #+#    #+#              #
-#    Updated: 2025/12/15 15:09:27 by phofer           ###   ########.fr        #
+#    Updated: 2025/12/16 15:52:17 by phofer           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ INCLUDES    = -Iincludes
 SRC_DIR		= src
 OBJ_DIR		= objs
 
-SRC_FILES	= main.c utils.c init.c
+SRC_FILES	= main.c utils.c utils2.c init.c threads.c
 
 SRC			= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS		= $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))

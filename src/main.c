@@ -6,16 +6,11 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:15:43 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/15 16:33:40 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/16 15:55:02 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-// void	free_all(t_rules *rules)
-// {
-
-// }
 
 //test function, dont include in final
 void	print_struct(t_rules	*rules)
@@ -39,5 +34,6 @@ int	main(int argc, char **argv)
 	}
 	initialize(argv, &rules);
 	print_struct(&rules);
+	free_all(&rules);
 	return (0);
 }
