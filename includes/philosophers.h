@@ -6,7 +6,7 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:33:51 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/16 15:53:54 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/17 17:53:04 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,34 +26,38 @@
 
 typedef struct s_philo
 {
-	int id;         // Philosopher number (1..n)
-	uint64_t last_meal; // Timestamp of last meal (ms)
-	int eat_count;  // How many times this philosopher has eaten
+	int				id;
+	uint64_t		last_meal;
+	int				eat_count;
 
-	pthread_mutex_t *left_fork;  // pointer to left fork mutex
-	pthread_mutex_t *right_fork; // pointer to right fork mutex
-	pthread_t thread;      // Thread representing this philosopher
-	struct s_rules *rules; // Pointer to the shared simulation rules
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	pthread_t		thread;
+	struct s_rules	*rules;
 }		t_philo;
 
 typedef struct s_rules
 {
-	int	quantity;
-	int	time_to_eat;
-	int	time_to_die;
-	int	time_to_sleep;
-	int	eat_amount;
-	int	total_finished;
-	int	dead;
-	int	all_full;
+	int				quantity;
+	int				time_to_eat;
+	int				time_to_die;
+	int				time_to_sleep;
+	int				eat_amount;
+	int				total_finished;
+	int				dead;
+	int				all_full;
 
-	int			stop;		// flag: 1 = simulation should end
-	uint64_t	start_time; // timestamp when simulation starts
+	int				stop;
+	uint64_t		start_time;
 
-	pthread_mutex_t *forks;
-	pthread_mutex_t write_lock; // protects printing
-	pthread_mutex_t state_lock;
-	t_philo *philos;            // pointer to array of all philosophers
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	write_lock;
+	pthread_mutex_t	state_lock;
+
+	int				fork_flag;
+	int				write_flag;
+	int				state_flag;
+	t_philo			*philos;
 }		t_rules;
 
 enum e_fork
@@ -68,5 +72,17 @@ void		initialize(char **av, t_rules	*rules);
 int			init_args(char **av, t_rules	*rules);
 int			parse_args(char **av, t_rules	*rules);
 void		free_all(t_rules *rules);
+void		*t_philo_routine(void *arg);
+int			run_simulation(t_rules *rules);
+int			check_all_full(t_rules *rules);
+uint64_t	get_last_meal(t_philo *p);
+void		inc_eat_count(t_philo *p);
+int			get_eat_count(t_philo *p);
+void		set_last_meal(t_philo *p, uint64_t t);
+void		print_death(t_philo *p);
+void		print_state(t_philo *p, const char *msg);
+void		set_stop(t_rules *r, int value);
+int			get_stop(t_rules *r);
+void		ft_sleep_ms(t_rules *r, int ms);
 
 #endif

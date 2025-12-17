@@ -6,20 +6,38 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 15:15:43 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/16 15:55:02 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/17 17:46:28 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-//test function, dont include in final
-void	print_struct(t_rules	*rules)
+void	free_all(t_rules *rules)
 {
-	printf("quantity = %d\n", rules->quantity);
-	printf("time_to_die = %d\n", rules->time_to_die);
-	printf("time_to_eat = %d\n", rules->time_to_eat);
-	printf("time_to_sleep = %d\n", rules->time_to_sleep);
-	printf("eat_amount = %d\n", rules->eat_amount);
+	int	i;
+
+	if (!rules)
+		return ;
+	if (rules->forks)
+	{
+		i = 0;
+		while (i < rules->fork_flag)
+		{
+			pthread_mutex_destroy(&rules->forks[i]);
+			i++;
+		}
+		free(rules->forks);
+		rules->forks = NULL;
+	}
+	if (rules->state_flag == 1)
+		pthread_mutex_destroy(&rules->state_lock);
+	if (rules->write_flag == 1)
+		pthread_mutex_destroy(&rules->write_lock);
+	if (rules->philos)
+	{
+		free(rules->philos);
+		rules->philos = NULL;
+	}
 }
 
 int	main(int argc, char **argv)
@@ -33,7 +51,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	initialize(argv, &rules);
-	print_struct(&rules);
+	run_simulation(&rules);
 	free_all(&rules);
 	return (0);
 }

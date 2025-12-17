@@ -6,7 +6,7 @@
 /*   By: phofer <phofer@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 17:38:15 by phofer            #+#    #+#             */
-/*   Updated: 2025/12/16 15:55:35 by phofer           ###   ########.fr       */
+/*   Updated: 2025/12/17 17:48:47 by phofer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ int	parse_args(char **av, t_rules	*rules)
 
 int	init_args(char **av, t_rules	*rules)
 {
+	rules->fork_flag = 0;
+	rules->state_flag = 0;
+	rules->write_flag = 0;
 	rules->eat_amount = -1;
 	if (parse_args(av, rules) != 0)
 	{
@@ -56,12 +59,6 @@ int	init_args(char **av, t_rules	*rules)
 	rules->total_finished = 0;
 	rules->philos = NULL;
 	rules->forks = NULL;
-	rules->start_time = ft_now_ms();
-	if (!rules->start_time)
-	{
-		printf("ERROR: gettimeofday failed");
-		return (1);
-	}
 	return (0);
 }
 
@@ -101,11 +98,16 @@ int	init_forks(t_rules	*rules)
 		if (pthread_mutex_init(&rules->forks[i], NULL) != 0)
 			return (1);
 		++i;
+		++rules->fork_flag;
 	}
 	if (pthread_mutex_init(&rules->state_lock, NULL) != 0)
 		return (1);
+	else
+		rules->state_flag = 1;
 	if (pthread_mutex_init(&rules->write_lock, NULL) != 0)
 		return (1);
+	else
+		rules->write_flag = 1;
 	return (0);
 }
 
@@ -115,16 +117,14 @@ void	initialize(char **av, t_rules	*rules)
 		exit (1);
 	if (init_forks(rules) != 0)
 	{
-		printf("ERROR: init_forks failed");
+		printf("ERROR: init_forks failed\n");
 		free_all(rules);
 		exit (1);
 	}
 	if (init_philosophers(rules) != 0)
 	{
-		printf("ERROR: init_philosophers failed");
+		printf("ERROR: init_philosophers failed\n");
 		free_all(rules);
 		exit (1);
 	}
-
 }
-
